@@ -1,0 +1,30 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
+
+void logger(String message) {
+  Logger.log('', message);
+}
+
+class Logger {
+  static Map<String, Function(Log)> logListeners = {};
+
+  static void log(String tag, String message) {
+    print('logger: $message');
+    var log = Log(DateTime.now(), message, tag);
+    for (var listener in logListeners.values) {
+      listener(log);
+    }
+    Sentry.addBreadcrumb(Breadcrumb(message: message, category: 'logger'));
+  }
+
+  static void setLogListener(String name, Function(Log) listener) {
+    logListeners[name] = listener;
+  }
+}
+
+class Log {
+  DateTime time;
+  String message;
+  String tag;
+
+  Log(this.time, this.message, this.tag);
+}

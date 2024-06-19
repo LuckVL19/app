@@ -1,0 +1,50 @@
+name: airdash
+base: core18
+version: '2.0.152'
+icon: snap/gui/airdash.png
+summary: Transfer photos and files anywhere
+description: Send picture from android to mac? Large file over 2gb from pc to pc? AirDash handles it all securely and free.
+
+grade: stable
+confinement: strict
+
+slots:
+  dbus-airdash:
+    interface: dbus
+    bus: session
+    name: io.flown.airdash
+
+apps:
+  airdash:
+    command: airdash
+    extensions: [flutter-stable]
+    plugs:
+      - network
+      - audio-playback
+      - audio-record
+      - home
+      - network-manager
+      - system-observe
+      - screen-inhibit-control
+      - screencast-legacy
+      - pulseaudio
+      - network-status
+      - network-observe
+      - network-bind
+      - network-control
+      - network-manager-observe
+      - desktop
+    slots:
+      - dbus-airdash
+
+parts:
+  zenity:
+    plugin: nil
+    stage-packages:
+      - zenity
+  airdash-part:
+    after:
+      - zenity
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
